@@ -265,14 +265,20 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-   int is_neg = ((x >> 31) & 0b1);  // 1 if x < 0
-   int is_zero = ((!x) & 0b1);  // 1 if x = 0
-   int is_pos = ((!is_zero) & (!((x >> 31) & 0b1)));  // 1 if x > 0
-   
-   // 00000000 00000000 00000000 00001100
-   // 11111111 11111111 11111111 11111011
-
-   return 0;
+   int is_neg = (x >> 31);
+   x = conditional(is_neg, ~x, x);
+   int b16 = (!!(x >> 16)) << 4;  // top-most 16 bits are set, divide x by 16
+   x >>= b16;
+   int b8 = (!!(x >> 8)) << 3;  // next 8 bits are set, divide x by 8 again
+   x >>= b8;
+   int b4 = (!!(x >> 4)) << 2; 
+   x >>= b4;
+   int b2 = (!!(x >> 2)) << 1;
+   x >>= b2;
+   int b1 = (!!(x >> 1));
+   x >>= b1;
+   int b0 = x;
+   return b16 + b8 + b4 + b2 + b1 + b0 + 1;
 }
 
 //float
